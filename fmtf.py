@@ -9,16 +9,16 @@ def make_list():
 # {'alpha2': u'AF', 'alpha3': u'AFG', 'name': u'Afghanistan', '_element': <DOM Element: iso_3166_entry at 0x8057e25a8>, 'numeric': u'004', 'official_name': u'Islamic Republic of Afghanistan'}
 # {'code': u'AD-07', 'type': u'Parish', '_element': <DOM Element: iso_3166_2_entry at 0x8065a2200>, 'country_code': u'AD', 'name': u'Andorra la Vella'}
     dblist = [
-	('', 'European Union', '', 'eu', ''),
-	('', 'International Committee of the Red Cross', '', 'icrc', ''),
-	('', 'International Committee of the Red Cross (Red Crescent) ', '', 'icrct', ''),
-	('', 'International Committee of the Red Cross (Red Crystal) ', '', 'icrcl', ''),
-	('', 'International Olympic Committee ', '', 'ioc', ''),
-	('', 'North Atlantic Treaty Organization ', '', 'nato', ''),
-	('', 'United Nations ', '', 'un', ''),
+	('', 'European Union', '', 'eu', '', 'Union'),
+	('', 'International Committee of the Red Cross', '', 'icrc', '', 'Organization'),
+	('', 'International Committee of the Red Cross (Red Crescent) ', '', 'icrct', '', 'Organization'),
+	('', 'International Committee of the Red Cross (Red Crystal) ', '', 'icrcl', '', 'Organization'),
+	('', 'International Olympic Committee ', '', 'ioc', '', 'Organization'),
+	('', 'North Atlantic Treaty Organization ', '', 'nato', '', 'Organization'),
+	('', 'United Nations ', '', 'un', '', 'Organization'),
     ]
-    dblist += [('', c.name, str(c.alpha2), str(c.alpha2.lower()), '') for c in pycountry.countries]
-    dblist += [(str(c.country_code), c.name, str(c.code), str(c.code.lower()), '') for c in pycountry.subdivisions]
+    dblist += [('', c.name, str(c.alpha2), str(c.alpha2.lower()), '', 'Country') for c in pycountry.countries]
+    dblist += [(str(c.country_code), c.name, str(c.code), str(c.code.lower()), '', c.type) for c in pycountry.subdivisions]
     dblist.sort()
     return dblist
 
@@ -40,7 +40,7 @@ def write_php_divs(dblist, name):
     print name
     PHP = open(name, 'w')
     write(PHP, '<?php\n')
-    div_arr = ['"%s", "%s", "%s"' % (x[2], x[1].encode('UTF8'), x[3] + '.gif') for x in dblist if x[0] == '']
+    div_arr = ['"%s", "%s", "%s", "%s"' % (x[2], x[1].encode('UTF8'), x[3] + '.gif', x[5]) for x in dblist if x[0] == '']
     write_php_array(PHP, 'div', div_arr, encode=None)
     write(PHP, "\n?>")
 
@@ -67,7 +67,7 @@ def write_php_subdiv(dblist, code2):
 	if x[0] == '' and x[2] == code2:
 	    write(PHP, '$name = "%s";' % x[1])
 	    break
-    sub_arr = ['"%s", "%s", "%s"' % (x[2], x[1].encode('UTF8'), x[3] + '.gif') for x in dblist if x[0] == code2]
+    sub_arr = ['"%s", "%s", "%s", "%s"' % (x[2], x[1].encode('UTF8'), x[3] + '.gif', x[5].encode('UTF8')) for x in dblist if x[0] == code2]
     write_php_array(PHP, 'subs', sub_arr, encode=None)
     write(PHP, PHP_CY_IMAGE_BOTTOM)
 

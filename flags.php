@@ -17,7 +17,7 @@ The original intention of these flags were for use as in-line graphics with text
 These flags have been designed to be of a correct aspect ratio,
 most with a height of 12 to 14 pixels, but some as little as 9 or as many as 16.
 The widths mostly range from 13 to 28 pixels, with the smallest being 7 and the largest 33.
-The sizes are less than a twelve hundred <u>bytes</u>, and most are under 300!
+The sizes are less than a thousand <u>bytes</u>, and most are under 300!
 They have also been designed with web-safe colors.
 The image files have been named with the ISO3166 country codes for entities that have these codes assigned.
 <p>
@@ -85,13 +85,13 @@ function letter_links() {
 
 function table_head() {
 ?>
-<table bgcolor="#cccccc">
-  <tr><th bgcolor="#9999ff">Country</th><th bgcolor="#9999ff">Code</th><th bgcolor="#9999ff">&micro;Flag</th><th bgcolor="#9999ff">Filename</th></tr>
+<table>
+  <tr class="header"><th>Name</th><th>Division Type</th><th>Code</th><th>&micro;Flag</th><th>Filename</th></tr>
 <?php
 }
 
 function table_banner($name) {
-   echo ' <tr><th bgcolor="#ccccff" colspan=5><a name="' . $name . '"><font size=+1>' . $name . "</font></a></th></tr>\n";
+   echo ' <tr class="banner"><th colspan="6"><a name="' . $name . '">' . $name . "</a></th></tr>\n";
 }
 
 function table_entry($prnt, $arg) {
@@ -108,6 +108,7 @@ function table_entry($prnt, $arg) {
 	echo $arg[1];
     }
     echo '</td>';
+    echo '<td>' . $arg[3] . '</td>';
     echo '<td>' . $arg[0] . '</td>';
     $fn = $arg[2];
     if (file_exists($fn)) {
