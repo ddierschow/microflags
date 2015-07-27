@@ -1,5 +1,7 @@
 <?php
 
+$headers = ['Name', 'Code', 'Division Type', '&micro;Flag', 'Filename'];
+
 function html_head() {
 ?><html>
 <head>
@@ -84,9 +86,15 @@ function letter_links() {
 }
 
 function table_head() {
+    global $headers;
 ?>
 <table>
-  <tr class="header"><th>Name</th><th>Division Type</th><th>Code</th><th>&micro;Flag</th><th>Filename</th></tr>
+  <tr class="header">
+<?php
+    foreach ($headers as $hdr)
+        echo '<th>' . $hdr . '</th>';
+?>
+  </tr>
 <?php
 }
 
@@ -94,12 +102,13 @@ function table_banner($name) {
    echo ' <tr class="banner"><th colspan="6"><a name="' . $name . '">' . $name . "</a></th></tr>\n";
 }
 
+// code2, name, image name, entity type, link
 function table_entry($prnt, $arg) {
     echo '  <tr><td>';
     if ($prnt == '') {
-	$fn = strtolower($arg[0]) . '.php';
-	if (file_exists($fn))
-	    echo '<a href="' . $fn . '">' . $arg[1] . '</a>';
+	$lnk = $arg[4];
+	if (strpos($lnk, 'http') == 0 || file_exists($lnk))
+	    echo '<a href="' . $lnk . '">' . $arg[1] . '</a>';
 	else
 	    echo $arg[1];
     }
@@ -108,8 +117,8 @@ function table_entry($prnt, $arg) {
 	echo $arg[1];
     }
     echo '</td>';
-    echo '<td>' . $arg[3] . '</td>';
     echo '<td>' . $arg[0] . '</td>';
+    echo '<td>' . $arg[3] . '</td>';
     $fn = $arg[2];
     if (file_exists($fn)) {
 	echo '<td><center><a href="' . $fn . '"><img src="' . $fn . '" border=0></a></center></td>';

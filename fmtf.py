@@ -72,6 +72,16 @@ def write_php_subdiv(dblist, code2):
     write(PHP, PHP_CY_IMAGE_BOTTOM)
 
 
+
+def write_php_subdivs(dblist, name):
+    print name
+    PHP = open(name, 'w')
+    write(PHP, '<?php\n')
+    sub_arr = ['"%s", "%s", "%s", "%s", "%s"' % (x[0], x[2], x[1].encode('UTF8'), x[3] + '.gif', x[5].encode('UTF8')) for x in dblist if x[0] != ""]
+    write_php_array(PHP, 'subs', sub_arr, encode=None)
+    write(PHP, "\n?>")
+
+
 if __name__ == '__main__':
     dblist = make_list()
     subs = []
@@ -82,3 +92,4 @@ if __name__ == '__main__':
     for arg in subs:
 	write_php_subdiv(dblist, arg)
     write_php_divs(dblist, 'divs.php')
+    write_php_subdivs(dblist, 'subdivs.php')
