@@ -38,13 +38,13 @@ Links:
 <img src="fotw.gif"> <a href="http://www.crwflags.com/fotw/flags/">FOTW Homepage</a>
 | <img src="here.gif">
 <?php if ($this_page == 'name') { ?>
-List by Name
+List Countries by Name
 <?php } else { ?>
 <a href=".">List by Name</a>
 <?php } ?>
 | <img src="here.gif">
 <?php if ($this_page == 'code') { ?>
-List by Code
+List Countries by Code
 <?php } else { ?>
 <a href="code.php">List by Code</a>
 <?php } ?>
@@ -102,12 +102,14 @@ function table_banner($name) {
    echo ' <tr class="banner"><th colspan="6"><a name="' . $name . '">' . $name . "</a></th></tr>\n";
 }
 
-// code2, name, image name, entity type, link
+// code2, name, image name, entity type, link, alias
 function table_entry($prnt, $arg) {
     echo '  <tr><td>';
     if ($prnt == '') {
-	$lnk = $arg[4];
-	if (strpos($lnk, 'http') == 0 || file_exists($lnk))
+	$lnk = '';
+	if (array_key_exists(4, $arg))
+	    $lnk = $arg[4];
+	if ((strpos($lnk, 'http') === 0) || file_exists($lnk))
 	    echo '<a href="' . $lnk . '">' . $arg[1] . '</a>';
 	else
 	    echo $arg[1];
@@ -120,6 +122,8 @@ function table_entry($prnt, $arg) {
     echo '<td>' . $arg[0] . '</td>';
     echo '<td>' . $arg[3] . '</td>';
     $fn = $arg[2];
+    if (array_key_exists(5, $arg) and $arg[5])
+	$fn = strtolower($arg[5]) . '.gif';
     if (file_exists($fn)) {
 	echo '<td><center><a href="' . $fn . '"><img src="' . $fn . '" border=0></a></center></td>';
 	echo '<td><code>' . $fn . '</code></td></tr>';
@@ -153,13 +157,16 @@ function cmp($a, $b) {
 }
 
 
-function subs_page($code2, $name, $subs) {
+function subs_page($code2, $name, $subs, $fn) {
     html_head();
     top_links($code2);
 
     table_head();
-    table_entry('', [$code2, $name, strtolower($code2) . '.gif']);
+    table_entry('', [$code2, $name, $fn, 'Country']);
     foreach ($subs as $arg) {
+	if (array_key_exists(4, $arg))
+	    $arg[5] = $arg[4];
+	$arg[4] = '';
 	table_entry($code2, $arg);
     }
     table_tail();

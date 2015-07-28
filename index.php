@@ -17,6 +17,8 @@ foreach ($div as $arg) {
 	$curr = $arg[$sortby][0];
 	table_banner($curr);
     }
+    if (array_key_exists(4, $arg))
+	$arg[5] = $arg[4];
     $arg[4] = strtolower($arg[0]) . '.php';
     table_entry('', $arg);
 }
