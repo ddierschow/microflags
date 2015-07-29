@@ -21,7 +21,7 @@ function get_images() {
     if ($dh = opendir(getcwd())) {
         while (($fn = readdir($dh)) !== false) {
 	    $sizes = getimagesize($fn);
-	    if (substr($fn, -4) == '.gif' && ($sizes[0] <= 33) && ($sizes[1] <= 16) && !in_array($fn, $ignores))
+	    if (substr($fn, -4) == '.gif' && ($sizes[0] <= 32) && ($sizes[1] <= 16) && !in_array($fn, $ignores))
 		$imgs[] = $fn;
         }
         closedir($dh);
