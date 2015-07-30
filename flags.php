@@ -3,6 +3,7 @@
 $headers = ['Name', 'Code', 'Division Type', '&micro;Flag', 'Filename'];
 
 function html_head() {
+    global $link;
 ?><html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
@@ -17,14 +18,14 @@ function html_head() {
 
 The original intention of these flags were for use as in-line graphics with text.
 These flags have been designed to be of a correct aspect ratio,
-most with a height of 12 to 14 pixels, but some as little as 9 or as many as 16.
+most with a height of 12 to 15 pixels, but some as little as 9 or as many as 16.
 The widths mostly range from 13 to 28 pixels, with the smallest being 7 and the largest 32.
 The sizes are less than 300 <u>bytes</u>!
 They have also been designed with web-safe colors.
 The image files have been named with the ISO3166 country codes for entities that have these codes assigned.
 <p>
 
-This page was designed and drawn by <a href="http://www.xocolatl.com/dean/">Dean Dierschow</a>.
+This page was designed and drawn by <a href="<?php echo $link['AUTHOR']; ?>">Dean Dierschow</a>.
 <p><hr><p>
 
 <?php
@@ -32,10 +33,12 @@ This page was designed and drawn by <a href="http://www.xocolatl.com/dean/">Dean
 
 
 function top_links($this_page) {
+    global $link;
 ?>
 Links:
 
-<img src="fotw.gif"> <a href="http://www.crwflags.com/fotw/flags/">FOTW Homepage</a>
+<img src="fotw.gif"> <a href="<?php echo $link['FOTW']; ?>">FOTW Homepage</a>
+| <img src="iso.gif"> <a href="<?php echo $link['ISO']; ?>">ISO 3166 Maintenance Agency</a>
 | <img src="here.gif">
 <?php if ($this_page == 'name') { ?>
 List Countries by Name

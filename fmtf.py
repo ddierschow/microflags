@@ -2,22 +2,15 @@
 
 import os, sys
 import pycountry
+import Image
 
-FOTW = 'http://www.crwflags.com/fotw/'
+dat_file_tags = ['link', 'alias', 'division']
 
-
-def make_list():
-    dblist = [
-	('', 'European Union', '', 'eu', '', 'Union'),
-	('', 'International Committee of the Red Cross', '', 'icrc', '', 'Organization'),
-	('', 'International Committee of the Red Cross (Red Crescent) ', '', 'icrct', '', 'Organization'),
-	('', 'International Committee of the Red Cross (Red Crystal) ', '', 'icrcl', '', 'Organization'),
-	('', 'International Olympic Committee ', '', 'ioc', '', 'Organization'),
-	('', 'North Atlantic Treaty Organization ', '', 'nato', '', 'Organization'),
-	('', 'United Nations ', '', 'un', '', 'Organization'),
-    ]
+def make_list(flagdat):
+    dblist = [('', c[1][1], '', c[0], '', c[1][0]) for c in 
+	      [(d, flagdat['division'][d].split('/')) for d in flagdat['division']]]
     dblist += [('', c.name, str(c.alpha2), str(c.alpha2.lower()), '', 'Country') for c in pycountry.countries]
-    dblist += [(str(c.country_code), c.name, str(c.code), str(c.code.lower()), '', c.type) for c in pycountry.subdivisions]
+    dblist += [(str(c.country_code), c.name, str(c.code), str(c.code.lower()), '', c.type.title()) for c in pycountry.subdivisions]
     dblist.sort()
     return dblist
 
@@ -30,25 +23,30 @@ def write(out_file, outstr, endln='\n', encode='UTF8'):
 
 def write_php_array(out_file, name, array, encode='UTF8'):
     write(out_file, '$%s = array();' % name, encode=encode)
-    for ent in array:
-	#fmt_ent = ', '.join([repr(x) for x in ent])
-	write(out_file, '$%s[] = array(%s);' % (name, ent), encode=encode)
+    if isinstance(array, dict):
+	for key in array:
+	    write(out_file, '$%s["%s"] = %s;' % (name, key, array[key]), encode=encode)
+    else:
+	for ent in array:
+	    write(out_file, '$%s[] = %s;' % (name, ent), encode=encode)
+    write(out_file, "")
 
 
 def make_div(cy, alias):
     ret = '"%s", "%s", "%s", "%s"' % (cy[2], cy[1].encode('UTF8'), cy[3] + '.gif', cy[5].encode('UTF8'))
     if cy[2] in alias:
 	ret += ', "%s"' % alias[cy[2]]
-    return ret
+    return 'array(%s)' % ret
 
 
 def write_php_divs(dblist, name, flagdat, verbose):
-    #print name
     out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
+    link_arr = {x: '"%s"' % flagdat['link'][x] for x in flagdat['link']}
+    write_php_array(out_file, 'link', link_arr, encode=None)
     div_arr = [make_div(x, flagdat['alias']) for x in dblist if x[0] == '']
     write_php_array(out_file, 'div', div_arr, encode=None)
-    write(out_file, "\n?>")
+    write(out_file, "?>")
     if verbose:
 	count_div = count_fil = 0
 	for x in dblist:
@@ -69,15 +67,12 @@ include "divs.php";
 
 # here we have to define $code2, $name, $subs, and $fn.
 
-PHP_CY_IMAGE_BOTTOM = '''
-subs_page($code2, $name, $subs, $fn);
+PHP_CY_IMAGE_BOTTOM = '''subs_page($code2, $name, $subs, $fn);
 ?>'''
 
 
 def write_php_subdiv(dblist, code2, flagdat, verbose):
-    name = code2.lower() + '.php'
-    #print name
-    out_file = open(name, 'w')
+    out_file = open(code2.lower() + '.php', 'w')
     write(out_file, PHP_IMAGE_TOP)
     write(out_file, PHP_CY_IMAGE_TOP)
     write(out_file, '$code2 = "%s";' % code2)
@@ -98,32 +93,63 @@ def write_php_subdiv(dblist, code2, flagdat, verbose):
 	print code2, count_fil, '/', count_sub
 
 
+def make_subdiv(cy, alias):
+    ret = '"%s", "%s", "%s", "%s", "%s"' % (cy[0], cy[2], cy[1].encode('UTF8'), cy[3] + '.gif', cy[5].encode('UTF8'))
+    if cy[2] in alias:
+	ret += ', "%s"' % alias[cy[2]]
+    return 'array(%s)' % ret
+
 
 def write_php_subdivs(dblist, name, flagdat, verbose):
-    #print name
     out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
-    sub_arr = ['"%s", ' + make_div(x, flagdat['alias']) for x in dblist if x[0] != ""]
+    sub_arr = [make_subdiv(x, flagdat['alias']) for x in dblist if x[0] != ""]
     write_php_array(out_file, 'subs', sub_arr, encode=None)
-    write(out_file, "\n?>")
+    write(out_file, "?>")
 
 
 def get_data(fn):
-    dat = {}
+    dat = {x: {} for x in dat_file_tags}
     for ln in open(fn):
 	ln = ln.strip()
 	if not ln or ln.startswith('#'):
 	    continue
 	ln = ln.split(' ', 2)
-	dat.setdefault(ln[0], dict())
 	dat[ln[0]][ln[1]] = ln[2]
     return dat
+
+
+def show_counts(dblist, flagdat):
+    counts = {}
+    for ent in dblist:
+	if ent[2] in flagdat['alias']:
+	    continue
+	fn = ent[3] + '.gif'
+	if os.path.exists(fn):
+	    sz = Image.open(fn).size
+	    counts.setdefault(sz[0], dict())
+	    counts[sz[0]].setdefault(sz[1], 0)
+	    counts[sz[0]][sz[1]] += 1
+
+    print "   |",
+    for x in range(7, 33):
+	print "%3d" % x,
+    print
+    print "-- +",
+    for x in range(7, 33):
+	print "---",
+    print
+    for y in range(9, 17):
+	print "%2d |" % y,
+	for x in range(7, 33):
+	    print "%3d" % counts.get(x, {}).get(y, 0),
+	print
 
 
 if __name__ == '__main__':
     verbose = len(sys.argv) > 1 and sys.argv[1] == '-v'
     flagdat = get_data('flags.dat')
-    dblist = make_list()
+    dblist = make_list(flagdat)
     subs = []
     for ent in dblist:
 	if ent[0] and ent[0] not in subs:
@@ -133,3 +159,5 @@ if __name__ == '__main__':
 	write_php_subdiv(dblist, arg, flagdat, verbose)
     write_php_divs(dblist, 'divs.php', flagdat, verbose)
     write_php_subdivs(dblist, 'subdivs.php', flagdat, verbose)
+    if verbose:
+	show_counts(dblist, flagdat)

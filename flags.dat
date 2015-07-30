@@ -1,4 +1,12 @@
+link FOTW http://flagspot.net/
+link ISO http://www.iso.org/iso/country_codes/
+link AUTHOR http://www.xocolatl.com/dean/
+
 alias HM AU
+
+alias CN-71 TW
+alias CN-91 HK
+alias CN-92 MO
 
 alias YT FR
 alias RE FR
@@ -33,3 +41,86 @@ alias US-MP MP
 alias US-PR PR
 alias US-UM US
 alias US-VI VI
+
+division eu Union/European Union
+division icrc Organization/International Committee of the Red Cross
+division icrct Organization/International Committee of the Red Cross (Red Crescent)
+division icrcl Organization/International Committee of the Red Cross (Red Crystal)
+division ioc Organization/International Olympic Committee
+division nato Organization/North Atlantic Treaty Organization
+division un Organization/United Nations
+division cis Union/Commonwealth of Independent States
+
+#AC Refers to Ascension Island and reserved at the request of Universal Postal Union (UPU)
+#CP Refers to Clipperton Island and reserved at the request of International Telecommunication Union (ITU).
+#DG Refers to Diego Garcia and reserved at the request of International Telecommunication Union (ITU)
+#EA Refers to Ceuta, Melilla and reserved at the request of World Customs Organization (WCO).
+#EU Refers to European Union and reserved at the request of ISO 4217/MA (March 1998) for ISO 6166, Securities - International securities identification numbering system (ISIN).
+#EZ Refers to European OTC derivatives and reserved at the request of ISO 6166/RA, Securities - International securities identification numbering system (ISIN).
+#FX France, Metropolitan; Refers to Metropolitan France and reserved at the request of France.
+#IC Refers to the Canary Islands and reserved at the request of World Customs Organization (WCO)
+#SU USSR; Refers to the former USSR and reserved at the request of the Foundation for Internet Development (FID).
+#TA Refers to Tristan da Cunha and reserved at the request of Universal Postal Union (UPU).
+#UK Refers to the United Kingdom and reserved at the request of United Kingdom.
+#UN Refers to the United Nations and reserved by the ISO 3166 Maintenance Agency.
+
+#AP Refers to African Regional Intellectual Property Organization and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#BX Refers to Benelux Office for Intellectual Property and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#DY Refers to Benin (BJ, BEN, 204) and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#EF Refers to Union of Countries under the European Community Patent Convention and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#EM Refers to the European Trademark Office and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#EP Refers to the European Patent Organization and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#EV Requested by World Intellectual Property Organization (WIPO) for use in Standard ST.3
+#EW Refers to Estonia and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#FL Refers to Liechtenstein and to a car vehicle distinguishing signs which are in use but which were not notified to the Secretary-General of the United Nations under the 1949 Convention
+#GC Refers to the Patent Office of the Cooperation Council for the Arab States of the Gulf (GCC) and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#IB Refers to International Bureau of WIPO and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#JA Refers to Jamaica and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#LF Refers Libya Fezzan and to car vehicle distinguishing signs which are in use but which were not notified to the Secretary-General of the United Nations under the 1949 Convention.
+#OA Refers to the African Intellectual Property Organization and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#PI Refers to the Philippines and to 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RA Refers to Argentina and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RB Refers to Bolivia or to Botswana (identical codes) and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RC Refers to China and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RH Refers to Haiti and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#RI Refers to Indonesia and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RL Refers to Lebanon and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RM Refers to Madagascar and to the 1949 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RN Refers to Niger and to the 1968 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#RP Refers to the Philippines and to the 1968 Road Traffic Convention. Requested by Secretary-General of UN for Road Traffic Conventions.
+#SF Refers to Finland and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#WG Refers to Grenada and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#WL Refers to Saint Lucia and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#WO Refers to the World Intellectual Property Organization and reserved at the request of World Intellectual Property Organization (WIPO) for use in Standard ST.3.
+#WV Refers to Saint Vincent and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+#YV Refers to Venezuela and to a list of car vehicle distinguishing signs notified to the Secretary-General of the United Nations under 1949 Road Traffic Convention and 1968 Road Traffic Convention.
+
+#AN Netherlands Antilles Reserved from 2010-12 to 2060-12.
+#BU Burma Reserved from 1989-12 to 2039-12.
+#CS Serbia and Montenegro Reserved from 2006-09 to 2056-09.
+#NT Neutral Zone Reserved from 1993-07 to 2043-07.
+#TP East Timor Reserved from 2002-05 to 2052-05.
+#YU Yugoslavia Reserved from 2003-07 to 2053-07.
+#ZR Zaire Reserved from 1997-07 to 2047-07.
+
+#BQ British Antarctic Territory 1974-12-15 to 1981-05-15
+#CT Canton and Enderbury Islands 1974-12-15 to 1984-01-15
+#CS Czechoslovakia 1974-12-15 to 1993-06-15
+#DY Dahomey 1974-12-15 to 1977-08-01
+#NQ Dronning Maud Land 1974-12-15 to 1983-01-15
+#AI French Afars and Issas 1974-12-15 to 1978-07-15
+#FQ French Southern and Antarctic Territories 1974-12-15 to 1981-05-15
+#DD German Democratic Republic 1974-12-15 to 1990-12-04
+#GE Gilbert and Ellice Islands 1974-12-15 to 1977-08-01
+#JT Johnston Island 1974-12-15 to 1986-07-14
+#MI Midway Islands 1974-12-15 to 1986-07-14
+#NH New Hebrides 1974-12-15 to 1980-01-15
+#PC Pacific Islands (Trust Territory) 1974-12-15 to 1986-01-15
+#PZ Panama Canal Zone 1974-12-15 to 1981-05-15
+#SK Sikkim 1974-12-15 to 1977-08-01
+#RH Southern Rhodesia 1974-12-15 to 1980-01-15
+#PU United States Miscellaneous Pacific Islands 1974-12-15 to 1986-07-14
+#HV Upper Volta 1974-12-15 to 1984-11-30
+#VD Viet-Nam, Democratic Republic of 1974-12-15 to 1977-08-01
+#WK Wake Island 1974-12-15 to 1986-07-14
+#YD Yemen, Democratic 1974-12-15 to 1990-08-14

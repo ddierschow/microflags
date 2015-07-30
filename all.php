@@ -18,7 +18,7 @@ foreach ($div as $arg) {
 	$curr = $arg[$sortby][0];
 	table_banner($curr);
     }
-    $arg[4] = 'http://www.crwflags.com/fotw/flags/' . strtolower($arg[0]) . '.html';
+    $arg[4] = $link['FOTW'] . 'flags/' . strtolower($arg[0]) . '.html';
     table_entry('', $arg);
 
     foreach ($subs as $sarg) {

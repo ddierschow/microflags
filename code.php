@@ -2,11 +2,10 @@
 include "flags.php";
 include "divs.php";
 
-$name = "code";
 $sortby = 0;
 
 html_head();
-top_links($name);
+top_links('code');
 letter_links();
 usort($div, "cmp");
 
