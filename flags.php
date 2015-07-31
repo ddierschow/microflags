@@ -1,10 +1,11 @@
 <?php
 
 $headers = ['Name', 'Code', 'Division Type', '&micro;Flag', 'Filename'];
+$specials = ['name', 'code', 'all', 'check'];
 
-function html_head() {
-    global $link;
-?><html>
+function html_head($link) {
+?><!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=UTF-8">
 <title>Micro-Flags of the World</title>
@@ -12,14 +13,14 @@ function html_head() {
 <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
 <link rel="stylesheet" href="flags.css" type="text/css">
 </head>
-<body bgcolor="#FFFFFF">
+<body>
 <img src="logo.jpg" align="right">
 <h1>&micro;Flags of the World</h1><p><hr><p>
 
 The original intention of these flags were for use as in-line graphics with text.
 These flags have been designed to be of a correct aspect ratio,
-most with a height of 12 to 15 pixels, but some as little as 9 or as many as 16.
-The widths mostly range from 13 to 28 pixels, with the smallest being 7 and the largest 32.
+most with a height of 12 to 15 pixels, but some as few as 9 or as many as 16.
+The widths mostly range from 14 to 28 pixels, with the smallest being 7 and the largest 32.
 The sizes are less than 300 <u>bytes</u>!
 They have also been designed with web-safe colors.
 The image files have been named with the ISO3166 country codes for entities that have these codes assigned.
@@ -32,8 +33,7 @@ This page was designed and drawn by <a href="<?php echo $link['AUTHOR']; ?>">Dea
 }
 
 
-function top_links($this_page) {
-    global $link;
+function top_links($this_page, $link, $name, $specials) {
 ?>
 Links:
 
@@ -51,45 +51,23 @@ List Countries by Code
 <?php } else { ?>
 <a href="code.php">List by Code</a>
 <?php } ?>
+<?php if (!in_array($this_page, $specials)) { ?>
+<img src="fotw.gif"> <a href="<?php echo $link['FOTW'] . 'flags/' . strtolower($this_page) . '.html'; ?>">FOTW Page for <?php echo $name; ?></a>
+<?php } ?>
 <br>
 <?php
 }
 
 
-function letter_links() {
-?>
-<a href="#A"><b>A</b></a>
- | <a href="#B"><b>B</b></a>
- | <a href="#C"><b>C</b></a>
- | <a href="#D"><b>D</b></a>
- | <a href="#E"><b>E</b></a>
- | <a href="#F"><b>F</b></a>
- | <a href="#G"><b>G</b></a>
- | <a href="#H"><b>H</b></a>
- | <a href="#I"><b>I</b></a>
- | <a href="#J"><b>J</b></a>
- | <a href="#K"><b>K</b></a>
- | <a href="#L"><b>L</b></a>
- | <a href="#M"><b>M</b></a>
- | <a href="#N"><b>N</b></a>
- | <a href="#O"><b>O</b></a>
- | <a href="#P"><b>P</b></a>
- | <a href="#Q"><b>Q</b></a>
- | <a href="#R"><b>R</b></a>
- | <a href="#S"><b>S</b></a>
- | <a href="#T"><b>T</b></a>
- | <a href="#U"><b>U</b></a>
- | <a href="#V"><b>V</b></a>
- | <a href="#W"><b>W</b></a>
- | <a href="#Y"><b>Y</b></a>
- | <a href="#Z"><b>Z</b></a>
- | <a href="#Å"><b>Å</b></a>
-<p>
-<?php
+function letter_links($links) {
+    foreach ($links as $ind => $val) {
+	if ($ind)
+	    echo '| ';
+	echo '<a href="#' . $val . '"><b>' . ucfirst($val) . "</b></a>\n";
+    }
 }
 
-function table_head() {
-    global $headers;
+function table_head($headers) {
 ?>
 <table>
   <tr class="header">
@@ -101,11 +79,15 @@ function table_head() {
 <?php
 }
 
-function table_banner($name) {
-   echo ' <tr class="banner"><th colspan="6"><a name="' . $name . '">' . $name . "</a></th></tr>\n";
+function table_banner($link, $name) {
+   echo ' <tr class="banner"><th colspan="5"><a name="' . $link . '">' . $name . "</a></th></tr>\n";
 }
 
-// code2, name, image name, entity type, link, alias
+function table_note($note) {
+   echo ' <tr><td colspan="3">Note: <i>' . $note . '</i></td><td colspan="2">&nbsp;</td></tr>' . "\n";
+}
+
+// arg = code2, name, image name, entity type, link, alias
 function table_entry($prnt, $arg) {
     echo '  <tr><td>';
     if ($prnt == '') {
@@ -147,13 +129,12 @@ function table_tail() {
 function html_tail() {
 ?>
 </body>
-</html>
-<?php
+</html><?php
 }
 
 $sortby = 0;
 function cmp($a, $b) {
-    global $sortby;
+    global $sortby; // this one actually needs to be a global
     if ($a[$sortby] == $b[$sortby])
         return 0;
     return ($a[$sortby] < $b[$sortby]) ? -1 : 1;
@@ -161,11 +142,16 @@ function cmp($a, $b) {
 
 
 function subs_page($code2, $name, $subs, $fn) {
-    html_head();
-    top_links($code2);
+    global $headers, $specials;
+    global $link;
+    global $note;
+    html_head($link);
+    top_links($code2, $link, $name, $specials);
 
-    table_head();
+    table_head($headers);
     table_entry('', [$code2, $name, $fn, 'Country']);
+    if (isset($note))
+	table_note($note);
     foreach ($subs as $arg) {
 	if (array_key_exists(4, $arg))
 	    $arg[5] = $arg[4];
@@ -175,5 +161,55 @@ function subs_page($code2, $name, $subs, $fn) {
     table_tail();
 }
 
-html_tail();
+function index_page($name, $sortby, $page_links) {
+    global $headers, $specials;
+    global $link;
+    global $div, $subs;
+    html_head($link);
+    top_links($name, $link, $name, $specials);
+    letter_links($page_links);
+
+    table_head($headers);
+    usort($div, "cmp");
+    $curr = '';
+    foreach ($div as $arg) {
+	if ($arg[$sortby]) {
+	    if ($arg[$sortby][0] != $curr) {
+		$new = $curr;
+		if ($curr <= 'Z' && $curr != 'Other') {
+		    if ($arg[$sortby][0] > 'Z')
+			$new = 'other';
+		    else
+			$new = $arg[$sortby][0];
+		}
+		if ($new != $curr) {
+		    $curr = $new;
+		    table_banner($curr, ucfirst($curr));
+		}
+	    }
+	    if ($name == 'all')
+		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($arg[0]) . '.html';
+	    else if ($name == 'check') {
+		$arg[4] = strtolower($arg[0]) . '.php';
+		$arg[3] = '<img src="' . $link['FOTW'] . 'images/' . strtolower($arg[0][0]) . '/' . strtolower($arg[0]) . '.gif">';
+	    }
+	    else {
+		if (array_key_exists(4, $arg))
+		    $arg[5] = $arg[4];
+		$arg[4] = strtolower($arg[0]) . '.php';
+	    }
+	    table_entry('', $arg);
+	    if ($name == 'all') {
+		foreach ($subs as $sarg) {
+		    if ($sarg[0] == $arg[0])
+			table_entry($arg[2], array_slice($sarg, 1));
+		}
+	    }
+	}
+    }
+    table_tail();
+
+    html_tail();
+}
+
 ?>

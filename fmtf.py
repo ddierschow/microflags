@@ -4,7 +4,7 @@ import os, sys
 import pycountry
 import Image
 
-dat_file_tags = ['link', 'alias', 'division']
+dat_file_tags = ['link', 'alias', 'division', 'note']
 
 def make_list(flagdat):
     dblist = [('', c[1][1], '', c[0], '', c[1][0]) for c in 
@@ -21,7 +21,13 @@ def write(out_file, outstr, endln='\n', encode='UTF8'):
     out_file.write(outstr + endln)
 
 
-def write_php_array(out_file, name, array, encode='UTF8'):
+def format_array(array):
+    if isinstance(array, dict):
+	return ', '.join(['"%s" => "%s"' % (x, array[x]) for x in array])
+    return ', '.join(['"%s"' % x for x in array])
+
+
+def write_php_big_array(out_file, name, array, encode='UTF8'):
     write(out_file, '$%s = array();' % name, encode=encode)
     if isinstance(array, dict):
 	for key in array:
@@ -43,9 +49,15 @@ def write_php_divs(dblist, name, flagdat, verbose):
     out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
     link_arr = {x: '"%s"' % flagdat['link'][x] for x in flagdat['link']}
-    write_php_array(out_file, 'link', link_arr, encode=None)
+    write_php_big_array(out_file, 'link', link_arr, encode=None)
+    name_links = list(set([x[1][0] if x[1][0] < 'Z' else 'other' for x in dblist if not x[0]]))
+    code_links = list(set([x[2][0] for x in dblist if x[2]]))
+    name_links.sort()
+    code_links.sort()
+    write(out_file, "$%s = [%s];" % ('name_links', format_array(name_links)))
+    write(out_file, "$%s = [%s];" % ('code_links', format_array(code_links)))
     div_arr = [make_div(x, flagdat['alias']) for x in dblist if x[0] == '']
-    write_php_array(out_file, 'div', div_arr, encode=None)
+    write_php_big_array(out_file, 'div', div_arr, encode=None)
     write(out_file, "?>")
     if verbose:
 	count_div = count_fil = 0
@@ -76,13 +88,15 @@ def write_php_subdiv(dblist, code2, flagdat, verbose):
     write(out_file, PHP_IMAGE_TOP)
     write(out_file, PHP_CY_IMAGE_TOP)
     write(out_file, '$code2 = "%s";' % code2)
+    if code2 in flagdat['note']:
+	write(out_file, '$note = "%s";' % flagdat['note'][code2])
     for x in dblist:
 	if x[0] == '' and x[2] == code2:
 	    write(out_file, '$name = "%s";' % x[1])
 	    write(out_file, '$fn = "%s.gif";' % flagdat['alias'].get(x[2], x[2]).lower())
 	    break
     sub_arr = [make_div(x, flagdat['alias']) for x in dblist if x[0] == code2]
-    write_php_array(out_file, 'subs', sub_arr, encode=None)
+    write_php_big_array(out_file, 'subs', sub_arr, encode=None)
     write(out_file, PHP_CY_IMAGE_BOTTOM)
     if verbose:
 	count_sub = count_fil = 0
@@ -104,7 +118,7 @@ def write_php_subdivs(dblist, name, flagdat, verbose):
     out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
     sub_arr = [make_subdiv(x, flagdat['alias']) for x in dblist if x[0] != ""]
-    write_php_array(out_file, 'subs', sub_arr, encode=None)
+    write_php_big_array(out_file, 'subs', sub_arr, encode=None)
     write(out_file, "?>")
 
 
