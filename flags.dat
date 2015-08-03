@@ -2,6 +2,12 @@ link FOTW http://flagspot.net/
 link ISO http://www.iso.org/iso/country_codes/
 link AUTHOR http://www.xocolatl.com/dean/
 
+infra ISO iso.gif
+infra ball ball.gif
+infra FOTW fotw.gif
+infra logo here.gif
+infra llogo logo.gif
+
 alias HM AU
 
 alias CN-71 TW

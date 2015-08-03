@@ -1,10 +1,9 @@
 #!/usr/local/bin/python
 
-import os, sys
+import glob, os, sys
 import pycountry
-import Image
 
-dat_file_tags = ['link', 'alias', 'division', 'note']
+dat_file_tags = ['link', 'alias', 'division', 'note', 'infra']
 
 def make_list(flagdat):
     dblist = [('', c[1][1], '', c[0], '', c[1][0]) for c in 
@@ -133,31 +132,87 @@ def get_data(fn):
     return dat
 
 
+def is_websafe(img):
+    img = img.convert('RGB')
+    rgb = img_colors(img)
+    if not rgb:
+	return False
+    for pxl in rgb.keys():
+	if pxl[0] % 51 or pxl[1] % 51 or pxl[2] % 51:
+	    return False
+    return True
+
+
+def img_colors(img):
+    rgb = {}
+    for x in range(0, img.size[0]):
+	for y in range(0, img.size[1]):
+	    pxl = img.getpixel((x,y))
+	    if not rgb.has_key(pxl):
+		rgb[pxl] = 0
+	    rgb[pxl] = rgb[pxl] + 1
+    return rgb
+
+
 def show_counts(dblist, flagdat):
+    import Image
     counts = {}
+    not_ws = []
+    xs = set()
+    ys = set()
     for ent in dblist:
 	if ent[2] in flagdat['alias']:
 	    continue
 	fn = ent[3] + '.gif'
 	if os.path.exists(fn):
-	    sz = Image.open(fn).size
-	    counts.setdefault(sz[0], dict())
+	    img = Image.open(fn)
+	    sz = img.size
+	    xs.add(sz[0])
+	    ys.add(sz[1])
+	    counts.setdefault(sz[0], dict(t=0))
 	    counts[sz[0]].setdefault(sz[1], 0)
 	    counts[sz[0]][sz[1]] += 1
+	    counts[sz[0]]['t'] += 1
+	    if not is_websafe(img):
+		not_ws.append(fn)
+    print 'not websafe:', not_ws
 
     print "   |",
-    for x in range(7, 33):
+    for x in range(min(xs), max(xs) + 1):
 	print "%3d" % x,
     print
     print "-- +",
-    for x in range(7, 33):
+    for x in range(min(xs), max(xs) + 1):
 	print "---",
     print
-    for y in range(9, 17):
+    for y in range(min(ys), max(ys) + 1):
+	t = 0
 	print "%2d |" % y,
-	for x in range(7, 33):
+	for x in range(min(xs), max(xs) + 1):
+	    t += counts.get(x, {}).get(y, 0)
 	    print "%3d" % counts.get(x, {}).get(y, 0),
-	print
+	print "| %4d" % t
+    print "-- +",
+    for x in range(min(xs), max(xs) + 1):
+	print "---",
+    print
+    print "t  |",
+    t = 0
+    for x in range(min(xs), max(xs) + 1):
+	t += counts.get(x, {}).get('t', 0)
+	print "%3d" % counts.get(x, {}).get('t', 0),
+    print "| %4d" % t
+
+
+def show_orphans(dblist, flagdat):
+    gifs = glob.glob('*.gif')
+    for x in dblist:
+	if (x[3] + '.gif') in gifs:
+	    gifs.remove(x[3] + '.gif')
+    for x in flagdat['infra']:
+	if (flagdat['infra'][x]) in gifs:
+	    gifs.remove(flagdat['infra'][x])
+    print 'orphans:', gifs
 
 
 if __name__ == '__main__':
@@ -175,3 +230,4 @@ if __name__ == '__main__':
     write_php_subdivs(dblist, 'subdivs.php', flagdat, verbose)
     if verbose:
 	show_counts(dblist, flagdat)
+	show_orphans(dblist, flagdat)

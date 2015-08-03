@@ -174,6 +174,7 @@ function index_page($name, $sortby, $page_links) {
     $curr = '';
     foreach ($div as $arg) {
 	if ($arg[$sortby]) {
+	    $code2 = $arg[0];
 	    if ($arg[$sortby][0] != $curr) {
 		$new = $curr;
 		if ($curr <= 'Z' && $curr != 'Other') {
@@ -187,22 +188,26 @@ function index_page($name, $sortby, $page_links) {
 		    table_banner($curr, ucfirst($curr));
 		}
 	    }
-	    if ($name == 'all')
-		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($arg[0]) . '.html';
+	    if ($name == 'all') {
+		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
+		$arg[0] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
+	    }
 	    else if ($name == 'check') {
-		$arg[4] = strtolower($arg[0]) . '.php';
-		$arg[3] = '<img src="' . $link['FOTW'] . 'images/' . strtolower($arg[0][0]) . '/' . strtolower($arg[0]) . '.gif">';
+		$arg[4] = strtolower($code2) . '.php';
+		$arg[3] = '<img src="' . $link['FOTW'] . 'images/' . strtolower($code2[0]) . '/' . strtolower($code2) . '.gif">';
 	    }
 	    else {
 		if (array_key_exists(4, $arg))
 		    $arg[5] = $arg[4];
-		$arg[4] = strtolower($arg[0]) . '.php';
+		$arg[4] = strtolower($code2) . '.php';
 	    }
 	    table_entry('', $arg);
 	    if ($name == 'all') {
 		foreach ($subs as $sarg) {
-		    if ($sarg[0] == $arg[0])
+		    if ($sarg[0] == $code2) {
+			$sarg[1] = '<a href="tgm/?name=' . strtolower($sarg[1]) . '">' . $sarg[1] . '</a>';
 			table_entry($arg[2], array_slice($sarg, 1));
+		    }
 		}
 	    }
 	}
