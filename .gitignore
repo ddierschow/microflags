@@ -63,3 +63,6 @@ target/
 ??.php
 divs.php
 subdivs.php
+
+# The little editor
+tgm/

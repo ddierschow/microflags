@@ -64,7 +64,7 @@ def write_php_divs(dblist, name, flagdat, verbose):
 	    if x[0] == '' and x[2] not in flagdat['alias']:
 		count_div += 1
 		count_fil += int(os.path.exists(x[3] + '.gif'))
-	print 'Divisions', count_fil, '/', count_div
+	print 'Divisions %3d / %3d  (%3d%%)' % (count_fil, count_div, 100 * count_fil / count_div)
 
 
 PHP_IMAGE_TOP = '''<?php
@@ -103,7 +103,7 @@ def write_php_subdiv(dblist, code2, flagdat, verbose):
 	    if x[0] == code2 and x[2] not in flagdat['alias']:
 		count_sub += 1
 		count_fil += int(os.path.exists(x[3] + '.gif'))
-	print code2, count_fil, '/', count_sub
+	print '%s %3d / %3d  (%3d%%)' % (code2, count_fil, count_sub, 100 * count_fil / count_sub)
 
 
 def make_subdiv(cy, alias):
@@ -158,6 +158,7 @@ def show_counts(dblist, flagdat):
     import Image
     counts = {}
     not_ws = []
+    too_large = []
     xs = set()
     ys = set()
     for ent in dblist:
@@ -173,8 +174,11 @@ def show_counts(dblist, flagdat):
 	    counts[sz[0]].setdefault(sz[1], 0)
 	    counts[sz[0]][sz[1]] += 1
 	    counts[sz[0]]['t'] += 1
+	    if os.stat(fn).st_size > 300:
+		too_large.append(fn)
 	    if not is_websafe(img):
 		not_ws.append(fn)
+    print 'too large:', too_large
     print 'not websafe:', not_ws
 
     print "   |",
