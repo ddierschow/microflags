@@ -184,11 +184,11 @@ def show_counts(dblist, flagdat):
     print "   |",
     for x in range(min(xs), max(xs) + 1):
 	print "%3d" % x,
-    print
+    print "|    t"
     print "-- +",
     for x in range(min(xs), max(xs) + 1):
 	print "---",
-    print
+    print '+ ----'
     for y in range(min(ys), max(ys) + 1):
 	t = 0
 	print "%2d |" % y,
@@ -199,8 +199,8 @@ def show_counts(dblist, flagdat):
     print "-- +",
     for x in range(min(xs), max(xs) + 1):
 	print "---",
-    print
-    print "t  |",
+    print '+ ----'
+    print " t |",
     t = 0
     for x in range(min(xs), max(xs) + 1):
 	t += counts.get(x, {}).get('t', 0)
@@ -233,5 +233,5 @@ if __name__ == '__main__':
     write_php_divs(dblist, 'divs.php', flagdat, verbose)
     write_php_subdivs(dblist, 'subdivs.php', flagdat, verbose)
     if verbose:
-	show_counts(dblist, flagdat)
 	show_orphans(dblist, flagdat)
+	show_counts(dblist, flagdat)

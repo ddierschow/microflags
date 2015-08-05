@@ -10,6 +10,7 @@ img {display: block; margin-left: auto; margin-right: auto;}
 <?php
 
 $width = 20;
+$height = 48;
 $xm = 2;
 $xp = 2 + ($width % 2);
 $ym = 2;
@@ -30,8 +31,8 @@ function get_images() {
 }
 
 $imgs = get_images();
-//shuffle($imgs);
-sort($imgs);
+shuffle($imgs);
+//sort($imgs);
 $y = 0;
 while (count($imgs) >= $width) {
     echo "<tr>\n";
@@ -48,6 +49,8 @@ while (count($imgs) >= $width) {
     }
     $y = $y + 1;
     echo "</tr>\n";
+    if ($y >= $height)
+	break;
 }
 
 ?>
