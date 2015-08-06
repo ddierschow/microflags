@@ -3,14 +3,18 @@
 import glob, os, sys
 import pycountry
 
-dat_file_tags = ['link', 'alias', 'division', 'note', 'infra']
+dat_file_tags = ['link', 'alias', 'division', 'note', 'infra', 'type']
 
-def make_list(flagdat):
-    dblist = [('', c[1][1], '', c[0], '', c[1][0]) for c in 
-	      [(d, flagdat['division'][d].split('/')) for d in flagdat['division']]]
-    dblist += [('', c.name, str(c.alpha2), str(c.alpha2.lower()), '', 'Country') for c in pycountry.countries]
+
+def make_db(flagdat):
+    dblist = [('', c[1], '', c[0].lower(), '', flagdat['type'].get(c[0], 'Organization')) for c in 
+	      #[(d, flagdat['division'][d]) for d in flagdat['division']]
+	      flagdat['division'].items()
+]
+    dblist += [('', c.name, str(c.alpha2), str(c.alpha2.lower()), '', flagdat['type'].get(c.alpha2, 'Country')) for c in pycountry.countries]
     dblist += [(str(c.country_code), c.name, str(c.code), str(c.code.lower()), '', c.type.title()) for c in pycountry.subdivisions]
     dblist.sort()
+    #dbdict = {c[2]: c for c in dblist if c[2]}
     return dblist
 
 
@@ -117,7 +121,7 @@ def write_php_subdivs(dblist, name, flagdat, verbose):
     out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
     sub_arr = [make_subdiv(x, flagdat['alias']) for x in dblist if x[0] != ""]
-    write_php_big_array(out_file, 'subs', sub_arr, encode=None)
+    write_php_big_array(out_file, 'subdiv', sub_arr, encode=None)
     write(out_file, "?>")
 
 
@@ -222,7 +226,7 @@ def show_orphans(dblist, flagdat):
 if __name__ == '__main__':
     verbose = len(sys.argv) > 1 and sys.argv[1] == '-v'
     flagdat = get_data('flags.dat')
-    dblist = make_list(flagdat)
+    dblist = make_db(flagdat)
     subs = []
     for ent in dblist:
 	if ent[0] and ent[0] not in subs:

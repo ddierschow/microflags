@@ -1,7 +1,11 @@
 <?php
 
 $headers = ['Name', 'Code', 'Division Type', '&micro;Flag', 'Filename'];
-$specials = ['name', 'code', 'all', 'check'];
+$specials = ['name', 'code', 'all', 'check', 'sub'];
+
+function get_item($arr, $key, $default='') {
+    return isset($arr[$key]) ? $arr[$key] : $default;
+}
 
 function html_head($link) {
 ?><!DOCTYPE html>
@@ -161,10 +165,10 @@ function subs_page($code2, $name, $subs, $fn) {
     table_tail();
 }
 
-function index_page($name, $sortby, $page_links) {
+function index_page($name, $sortby, $page_links, $sub='') {
     global $headers, $specials;
     global $link;
-    global $div, $subs;
+    global $div, $subdiv;
     html_head($link);
     top_links($name, $link, $name, $specials);
     letter_links($page_links);
@@ -173,6 +177,8 @@ function index_page($name, $sortby, $page_links) {
     usort($div, "cmp");
     $curr = '';
     foreach ($div as $arg) {
+	if ($sub && ($arg[0] != $sub))
+	    continue;
 	if ($arg[$sortby]) {
 	    $code2 = $arg[0];
 	    if ($arg[$sortby][0] != $curr) {
@@ -192,6 +198,11 @@ function index_page($name, $sortby, $page_links) {
 		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
 		$arg[0] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
 	    }
+	    else if ($name == 'sub' && $code2) {
+		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
+		$arg[0] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
+		$arg[3] = '<a href="?s=' . $code2 . '">' . $arg[3] . '</a>';
+	    }
 	    else if ($name == 'check') {
 		$arg[4] = strtolower($code2) . '.php';
 		$arg[3] = '<img src="' . $link['FOTW'] . 'images/' . strtolower($code2[0]) . '/' . strtolower($code2) . '.gif">';
@@ -202,8 +213,8 @@ function index_page($name, $sortby, $page_links) {
 		$arg[4] = strtolower($code2) . '.php';
 	    }
 	    table_entry('', $arg);
-	    if ($name == 'all') {
-		foreach ($subs as $sarg) {
+	    if ($name == 'all' || ($code2 && $sub == $code2)) {
+		foreach ($subdiv as $sarg) {
 		    if ($sarg[0] == $code2) {
 			$sarg[1] = '<a href="tgm/?name=' . strtolower($sarg[1]) . '">' . $sarg[1] . '</a>';
 			table_entry($arg[2], array_slice($sarg, 1));

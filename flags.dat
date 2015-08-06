@@ -51,14 +51,81 @@ alias US-VI VI
 
 alias PH-APA PH-KAL
 
-division eu Union/European Union
-division icrc Organization/International Committee of the Red Cross
-division icrct Organization/International Committee of the Red Cross (Red Crescent)
-division icrcl Organization/International Committee of the Red Cross (Red Crystal)
-division ioc Organization/International Olympic Committee
-division nato Organization/North Atlantic Treaty Organization
-division un Organization/United Nations
-division cis Union/Commonwealth of Independent States
+type CC Territory (AU)
+type HM External Territory (AU)
+type CX Territory (AU)
+type NF Territory (AU)
+
+type HK Administrative Region (CN)
+type MO Administrative Region (CN)
+
+type GL Overseas Division (DK)
+type FO Territory (DK)
+
+type AX Autonomous Area (FI)
+
+type GP Overseas Department (FR)
+type GF Overseas Department (FR)
+type MQ Overseas Department (FR)
+type YT Overseas Department (FR)
+type RE Overseas Department (FR)
+type TF Overseas Territory (FR)
+type PF Overseas Collectivity (FR)
+type PM Overseas Collectivity (FR)
+type WF Overseas Collectivity (FR)
+type MF Overseas Collectivity (FR)
+type BL Overseas Collectivity (FR)
+type NC Collectivity sui Generis (FR)
+
+type EH Territory (MA)
+
+type AW Autonomous Part (NL)
+type CW Overseas Country (NL)
+type SX Overseas Country (NL)
+type BQ Overseas Public Bodies (NL)
+
+type BV Nature Preserve (NO)
+type SJ Region (NO)
+
+type CK Territory (NZ)
+type NU Territory (NZ)
+type TK Territory (NZ)
+
+type IO Territory (UK)
+type KY Overseas Territory (UK)
+type BM Overseas Territory (UK)
+type GI Overseas Territory (UK)
+type AI Overseas Territory (UK)
+type FK Overseas Territory (UK)
+type PN Overseas Territory (UK)
+type SH Overseas Territory (UK)
+type GS Overseas Territory (UK)
+type TC Overseas Territory (UK)
+type MS Overseas Territory (UK)
+type VG Overseas Territory (UK)
+type GG Dependency (UK)
+type IM Dependency (UK)
+type JE Dependency (UK)
+
+type AS Territory (US)
+type GU Territory (US)
+type MP Territory (US)
+type PR Territory (US)
+type VI Territory (US)
+type UM Overseas Territory (US)
+
+type AQ Scientific Preserve
+type CIS Union
+type EU Union
+
+division EU European Union
+division ICRC International Committee of the Red Cross
+division ICRCT International Committee of the Red Cross (Red Crescent)
+division ICRCL International Committee of the Red Cross (Red Crystal)
+division IOC International Olympic Committee
+division NATO North Atlantic Treaty Organization
+division UN United Nations
+division CIS Commonwealth of Independent States
 
 #AC Refers to Ascension Island and reserved at the request of Universal Postal Union (UPU)
 #CP Refers to Clipperton Island and reserved at the request of International Telecommunication Union (ITU).
