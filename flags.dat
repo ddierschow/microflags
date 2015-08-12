@@ -35,6 +35,12 @@ alias FR-CP FR
 alias AE-FU AE
 
 alias BQ NL
+alias NL-AW AW
+alias NL-CW CW
+alias NL-BQ1 BQ-BO
+alias NL-BQ2 BQ-SA
+alias NL-BQ3 BQ-SE
+alias NL-SX SX
 
 alias BV NO
 alias SJ NO
@@ -202,3 +208,4 @@ division CIS Commonwealth of Independent States
 #YD Yemen, Democratic 1974-12-15 to 1990-08-14
 
 note AL Images of local Albanian flags are difficult to find.
+note IL Israeli districts do not have any form of government and have no flags or emblems.

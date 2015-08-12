@@ -91,28 +91,27 @@ function table_note($note) {
    echo ' <tr><td colspan="3">Note: <i>' . $note . '</i></td><td colspan="2">&nbsp;</td></tr>' . "\n";
 }
 
-// arg = code2, name, image name, entity type, link, alias
 function table_entry($prnt, $arg) {
     echo '  <tr><td>';
     if ($prnt == '') {
 	$lnk = '';
-	if (array_key_exists(4, $arg))
-	    $lnk = $arg[4];
+	if (array_key_exists('link', $arg))
+	    $lnk = $arg['link'];
 	if ((strpos($lnk, 'http') === 0) || file_exists($lnk))
-	    echo '<a href="' . $lnk . '">' . $arg[1] . '</a>';
+	    echo '<a href="' . $lnk . '">' . $arg['name'] . '</a>';
 	else
-	    echo $arg[1];
+	    echo $arg['name'];
     }
     else {
 	echo '<img src="ball.gif" alt="o">';
-	echo $arg[1];
+	echo $arg['name'];
     }
     echo '</td>';
-    echo '<td>' . $arg[0] . '</td>';
-    echo '<td>' . $arg[3] . '</td>';
-    $fn = $arg[2];
-    if (array_key_exists(5, $arg) and $arg[5])
-	$fn = strtolower($arg[5]) . '.gif';
+    echo '<td>' . $arg['code'] . '</td>';
+    echo '<td>' . $arg['type'] . '</td>';
+    $fn = $arg['filename'] . '.gif';
+    if (array_key_exists('alias', $arg) and $arg['alias'])
+	$fn = strtolower($arg['alias']) . '.gif';
     if (file_exists($fn)) {
 	echo '<td><center><a href="' . $fn . '"><img src="' . $fn . '" border=0></a></center></td>';
 	echo '<td><code>' . $fn . '</code></td></tr>';
@@ -136,51 +135,52 @@ function html_tail() {
 </html><?php
 }
 
-$sortby = 0;
+$cmp_sortby = 'name';
 function cmp($a, $b) {
-    global $sortby; // this one actually needs to be a global
-    if ($a[$sortby] == $b[$sortby])
+    global $cmp_sortby; // this one actually needs to be a global
+    if ($a[$cmp_sortby] == $b[$cmp_sortby])
         return 0;
-    return ($a[$sortby] < $b[$sortby]) ? -1 : 1;
+    return ($a[$cmp_sortby] < $b[$cmp_sortby]) ? -1 : 1;
 }
 
 
-function subs_page($code2, $name, $subs, $fn) {
+// API
+function subs_page($parent, $subs) {
     global $headers, $specials;
     global $link;
     global $note;
     html_head($link);
-    top_links($code2, $link, $name, $specials);
+    top_links($parent['code'], $link, $parent['name'], $specials);
 
     table_head($headers);
-    table_entry('', [$code2, $name, $fn, 'Country']);
-    if (isset($note))
-	table_note($note);
+    table_entry('', $parent);
+    if (isset($parent['note']))
+	table_note($parent['note']);
     foreach ($subs as $arg) {
-	if (array_key_exists(4, $arg))
-	    $arg[5] = $arg[4];
-	$arg[4] = '';
-	table_entry($code2, $arg);
+	table_entry($parent['code'], $arg);
     }
     table_tail();
 }
 
+// API
 function index_page($name, $sortby, $page_links, $sub='') {
-    global $headers, $specials;
+    global $headers, $specials, $cmp_sortby;
     global $link;
     global $div, $subdiv;
     html_head($link);
     top_links($name, $link, $name, $specials);
-    letter_links($page_links);
+    if (!$sub)
+	letter_links($page_links);
 
     table_head($headers);
+    $cmp_sortby = $sortby;
     usort($div, "cmp");
     $curr = '';
     foreach ($div as $arg) {
-	if ($sub && ($arg[0] != $sub))
+	if ($sub && ($arg['code'] != $sub))
 	    continue;
 	if ($arg[$sortby]) {
-	    $code2 = $arg[0];
+	    $code2 = $arg['code'];
 	    if ($arg[$sortby][0] != $curr) {
 		$new = $curr;
 		if ($curr <= 'Z' && $curr != 'Other') {
@@ -195,29 +195,39 @@ function index_page($name, $sortby, $page_links, $sub='') {
 		}
 	    }
 	    if ($name == 'all') {
-		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
-		$arg[0] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
+		$arg['link'] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
+		$arg['code'] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
 	    }
 	    else if ($name == 'sub' && $code2) {
-		$arg[4] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
-		$arg[0] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
-		$arg[3] = '<a href="?s=' . $code2 . '">' . $arg[3] . '</a>';
+		$num_flags = $cnt_flags = 0;
+		foreach ($subdiv as $sarg) {
+		    if ($sarg['parent'] == $code2 && !array_key_exists('alias', $sarg)) {
+			$num_flags += 1;
+			$cnt_flags += (file_exists($sarg['filename'] . '.gif') ? 1 : 0);
+		    }
+		}
+		$arg['link'] = $link['FOTW'] . 'flags/' . strtolower($code2) . '.html';
+		$arg['code'] = '<a href="tgm/?name=' . strtolower($code2) . '">' . $code2 . '</a>';
+		$arg['type'] = '<a href="?s=' . $code2 . '">' . $arg['type'] . '</a>';
+		if ($num_flags > 0) {
+		    $arg['type'] .= ' (' . $cnt_flags . '/' . $num_flags .  ')';
+		}
 	    }
 	    else if ($name == 'check') {
-		$arg[4] = strtolower($code2) . '.php';
-		$arg[3] = '<img src="' . $link['FOTW'] . 'images/' . strtolower($code2[0]) . '/' . strtolower($code2) . '.gif">';
+		$arg['link'] = strtolower($code2) . '.php';
+		$arg['type'] = '<img src="' . $link['FOTW'] . 'images/' . strtolower($code2[0]) . '/' . strtolower($code2) . '.gif">';
 	    }
 	    else {
-		if (array_key_exists(4, $arg))
-		    $arg[5] = $arg[4];
-		$arg[4] = strtolower($code2) . '.php';
+		$arg['link'] = strtolower($code2) . '.php';
 	    }
 	    table_entry('', $arg);
 	    if ($name == 'all' || ($code2 && $sub == $code2)) {
+		if (isset($arg['note']))
+		    table_note($arg['note']);
 		foreach ($subdiv as $sarg) {
-		    if ($sarg[0] == $code2) {
-			$sarg[1] = '<a href="tgm/?name=' . strtolower($sarg[1]) . '">' . $sarg[1] . '</a>';
-			table_entry($arg[2], array_slice($sarg, 1));
+		    if ($sarg['parent'] == $code2) {
+			$sarg['code'] = '<a href="tgm/?name=' . strtolower($sarg['code']) . '">' . $sarg['code'] . '</a>';
+			table_entry($arg['code'], $sarg);
 		    }
 		}
 	    }

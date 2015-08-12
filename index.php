@@ -2,7 +2,5 @@
 include "flags.php";
 include "divs.php";
 
-$sortby = 1;
-
-index_page('name', $sortby, $name_links);
+index_page('name', 'name', $name_links);
 ?>
