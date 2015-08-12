@@ -64,5 +64,15 @@ target/
 divs.php
 subdivs.php
 
+# My stuff
+all.php
+check.php
+obsolete/
+orphan/
+place
+reimage.py
+thing.php
+todo.txt
+
 # The little editor
 tgm/
