@@ -7,6 +7,17 @@ dat_file_tags = ['link', 'alias', 'division', 'note', 'infra', 'type']
 div_keys = ('parent', 'name', 'code', 'filename', 'type')  # optional: note alias subs
 
 
+def get_data(fn):
+    dat = {x: {} for x in dat_file_tags}
+    for ln in open(fn):
+	ln = ln.strip()
+	if not ln or ln.startswith('#'):
+	    continue
+	ln = ln.split(' ', 2)
+	dat[ln[0]][ln[1]] = ln[2]
+    return dat
+
+
 def make_db(flagdat):
     dblist = [('', c[1], '', c[0].lower(), flagdat['type'].get(c[0], 'Organization')) for c in 
 	      flagdat['division'].items()]
@@ -37,20 +48,13 @@ def make_db(flagdat):
 	    dbdict[cy[:2]]['subs'][cy]['alias'] = flagdat['alias'][cy]
 	else:
 	    dbdict[cy]['alias'] = flagdat['alias'][cy]
+    return flagdat
 
 
 def write(out_file, outstr, endln='\n', encode='UTF8'):
     if encode:
 	outstr = outstr.encode(encode)
     out_file.write(outstr + endln)
-
-
-def format_array(array, keys=None):
-    if isinstance(array, list):
-	return ', '.join(['"%s"' % x.encode('UTF8') for x in array])
-    if keys is None:
-	keys = array.keys()
-    return ', '.join(['"%s" => "%s"' % (x, array[x].encode('UTF8')) for x in keys if x in array])
 
 
 def write_php_big_array(out_file, name, array, encode='UTF8'):
@@ -64,6 +68,14 @@ def write_php_big_array(out_file, name, array, encode='UTF8'):
     write(out_file, "")
 
 
+def format_array(array, keys=None):
+    if isinstance(array, list):
+	return ', '.join(['"%s"' % x.encode('UTF8') for x in array])
+    if keys is None:
+	keys = array.keys()
+    return ', '.join(['"%s" => "%s"' % (x, array[x].encode('UTF8')) for x in keys if x in array])
+
+
 def make_div(cy):
     ret = format_array(cy, div_keys[1:] + ('note', 'alias'))
     return 'array(%s)' % ret
@@ -74,7 +86,7 @@ def make_subdiv(cy):
     return 'array(%s)' % ret
 
 
-def write_php_divs(fname, flagdat, verbose):
+def write_php_divs(fname, flagdat):
     out_file = open(fname, 'w')
     write(out_file, PHP_IMAGE_TOP)
     link_arr = {x: '"%s"' % flagdat['link'][x] for x in flagdat['link']}
@@ -88,13 +100,6 @@ def write_php_divs(fname, flagdat, verbose):
     div_arr = [make_div(x) for x in flagdat['divs'] + flagdat['orgs'] if x['parent'] == '']
     write_php_big_array(out_file, 'div', div_arr, encode=None)
     write(out_file, "?>")
-    if verbose:
-	count_div = count_fil = 0
-	for x in flagdat['divs'] + flagdat['orgs']:
-	    if x['code'] not in flagdat['alias']:
-		count_div += 1
-		count_fil += int(os.path.exists(x['filename'] + '.gif'))
-	print 'Divisions %3d / %3d  (%3d%%)' % (count_fil, count_div, 100 * count_fil / count_div)
 
 
 PHP_IMAGE_TOP = '''<?php
@@ -112,30 +117,18 @@ PHP_CY_IMAGE_BOTTOM = '''subs_page($parent, $subs);
 ?>'''
 
 
-def write_php_subdiv(cy, verbose):
-    out_file = open(cy['code'].lower() + '.php', 'w')
+def write_php_subdiv(name, cy):
+    out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
     write(out_file, PHP_CY_IMAGE_TOP)
     write(out_file, '$parent = %s;' % make_div(cy), encode=None)
-#    write(out_file, '$code2 = "%s";' % cy['code'])
-#    if cy.get('note'):
-#	write(out_file, '$note = "%s";' % cy['note'])
-#    write(out_file, '$name = "%s";' % cy['name'])
-#    write(out_file, '$fn = "%s";' % cy.get('alias', cy['code']).lower())
     sub_arr = [make_div(cy['subs'][x]) for x in cy['subs']]
     sub_arr.sort()
     write_php_big_array(out_file, 'subs', sub_arr, encode=None)
     write(out_file, PHP_CY_IMAGE_BOTTOM)
-    if verbose:
-	count_sub = count_fil = 0
-	for x in cy['subs']:
-	    if not 'alias' in cy['subs'][x]:
-		count_sub += 1
-		count_fil += int(os.path.exists(cy['subs'][x]['filename'] + '.gif'))
-	print '%s %3d / %3d  (%3d%%)' % (cy['code'], count_fil, count_sub, 100 * count_fil / count_sub)
 
 
-def write_php_subdivs(name, flagdat, verbose):
+def write_php_subdivs(name, flagdat):
     out_file = open(name, 'w')
     write(out_file, PHP_IMAGE_TOP)
     sub_arr = [make_subdiv(x) for x in flagdat['subs']]
@@ -143,16 +136,7 @@ def write_php_subdivs(name, flagdat, verbose):
     write(out_file, "?>")
 
 
-def get_data(fn):
-    dat = {x: {} for x in dat_file_tags}
-    for ln in open(fn):
-	ln = ln.strip()
-	if not ln or ln.startswith('#'):
-	    continue
-	ln = ln.split(' ', 2)
-	dat[ln[0]][ln[1]] = ln[2]
-    return dat
-
+# -- All the rest of this stuff is for my own information about the images.
 
 def is_websafe(img):
     img = img.convert('RGB')
@@ -176,7 +160,7 @@ def img_colors(img):
     return rgb
 
 
-def show_counts(flagdat):
+def show_size_counts(flagdat):
     import Image
     counts = {}
     not_ws = []
@@ -241,16 +225,55 @@ def show_orphans(flagdat):
     print 'orphans:', gifs
 
 
+def show_div_counts(flagdat):
+    count_div = count_fil = 0
+    for x in flagdat['divs'] + flagdat['orgs']:
+	if not x.get('alias'):
+	    count_div += 1
+	    count_fil += int(os.path.exists(x['filename'] + '.gif'))
+    print 'Divisions %3d / %3d  (%3d%%)' % (count_fil, count_div, 100 * count_fil / count_div)
+
+
+def show_subdiv_counts(flagdat):
+    l_done = []
+    l_part = []
+    l_none = []
+    for cy in flagdat['divs']:
+	if cy['subs']:
+	    count_sub = count_fil = 0
+	    for x in cy['subs']:
+		if not 'alias' in cy['subs'][x]:
+		    count_sub += 1
+		    count_fil += int(os.path.exists(cy['subs'][x]['filename'] + '.gif'))
+	    cy['count'] = count_fil
+	    cy['num'] = count_sub
+	    if count_fil == 0:
+		l_none.append(cy)
+	    elif count_fil == count_sub:
+		l_done.append(cy)
+	    else:
+		l_part.append(cy)
+    l_none.sort(key=lambda x: x['num'])
+    l_part.sort(key=lambda x: float(x['count']) / float(x['num']), reverse=True)
+    l_done.sort(key=lambda x: x['code'])
+    for l in [l_none, l_part, l_done]:
+	for cy in l:
+	    print '%s %3d / %3d  (%3d%%) %s' % (cy['code'], cy['count'], cy['num'], 100 * cy['count'] / cy['num'], cy.get('note', ''))
+	print
+
+
 if __name__ == '__main__':
-    verbose = len(sys.argv) > 1 and sys.argv[1] == '-v'
-    flagdat = get_data('flags.dat')
-    make_db(flagdat)
+    flagdat = make_db(get_data('flags.dat'))
 
     for cy in flagdat['divs']:
 	if cy['subs']:
-	    write_php_subdiv(cy, verbose)
-    write_php_divs('divs.php', flagdat, verbose)
-    write_php_subdivs('subdivs.php', flagdat, verbose)
-    if verbose:
+	    write_php_subdiv(cy['code'].lower() + '.php', cy)
+    write_php_divs('divs.php', flagdat)
+    write_php_subdivs('subdivs.php', flagdat)
+
+    if len(sys.argv) > 1 and sys.argv[1] == '-v':
+	# maintenance reports
+	show_div_counts(flagdat)
+	show_subdiv_counts(flagdat)
 	show_orphans(flagdat)
-	show_counts(flagdat)
+	show_size_counts(flagdat)
