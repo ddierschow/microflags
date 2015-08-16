@@ -57,6 +57,14 @@ alias US-VI VI
 
 alias PH-APA PH-KAL
 
+alias ES-O ES-AS
+alias ES-S ES-CB
+alias ES-LO ES-RI
+alias ES-M ES-MD
+alias ES-MU ES-MC
+alias ES-NA ES-NC
+alias ES-PM ES-IB
+
 type CC Territory (AU)
 type HM External Territory (AU)
 type CX Territory (AU)
