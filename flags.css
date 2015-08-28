@@ -1,4 +1,7 @@
 body {background-color: #FFFFFF;}
 table {width: 800px; background-color: #CCCCCC;}
 .header {background-color: #9999FF;}
-.banner {background-color: #CCCCFF; font-size: large;}
+.banner {background-color: #66CCFF; font-size: large;}
+.note {background-color: #CCCCCC;}
+.row_0 {background-color: #CCFFCC;}
+.row_1 {background-color: #CCCCFF;}

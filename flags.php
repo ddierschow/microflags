@@ -2,6 +2,7 @@
 
 $headers = ['Name', 'Code', 'Division Type', '&micro;Flag', 'Filename'];
 $specials = ['name', 'code', 'all', 'check', 'sub'];
+$row_n = 0;
 
 function get_item($arr, $key, $default='') {
     return isset($arr[$key]) ? $arr[$key] : $default;
@@ -24,7 +25,7 @@ function html_head($link) {
 The original intention of these flags were for use as in-line graphics with text.
 These flags have been designed to be of a correct aspect ratio,
 most with a height of 12 to 15 pixels, but some as few as 9 or as many as 16.
-The widths mostly range from 14 to 28 pixels, with the smallest being 7 and the largest 32.
+The widths mostly range from 14 to 28 pixels, with the smallest being 4 and the largest 32.
 The sizes are less than 300 <u>bytes</u>!
 They have also been designed with web-safe colors.
 The image files have been named with the ISO3166 country codes for entities that have these codes assigned.
@@ -88,11 +89,13 @@ function table_banner($link, $name) {
 }
 
 function table_note($note) {
-   echo ' <tr><td colspan="3">Note: <i>' . $note . '</i></td><td colspan="2">&nbsp;</td></tr>' . "\n";
+   echo ' <tr class="note"><td colspan="3">Note: <i>' . $note . '</i></td><td colspan="2">&nbsp;</td></tr>' . "\n";
 }
 
 function table_entry($prnt, $arg) {
-    echo '  <tr><td>';
+    global $row_n;
+    echo '  <tr class="row_' . $row_n . '"><td>';
+    $row_n = ($row_n + 1) % 2;
     if ($prnt == '') {
 	$lnk = '';
 	if (array_key_exists('link', $arg))
